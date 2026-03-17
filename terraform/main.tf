@@ -211,3 +211,93 @@ resource "aws_flow_log" "vpc_flow_logs" {
   traffic_type    = "ALL"
   vpc_id          = aws_vpc.main.id
 }
+
+resource "aws_key_pair" "ec2_key" {
+  key_name   = "secure-key"
+  public_key = file("~/.ssh/id_rsa.pub")
+}
+
+resource "aws_security_group" "ec2_sg" {
+  name   = "ec2-secure-sg"
+  vpc_id = aws_vpc.main.id
+
+  # SSH
+  ingress {
+    description = "SSH access"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["TU_IP/32"] # ⚠️ cámbialo
+  }
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_iam_role" "ec2_role" {
+  name = "ec2-ssm-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Effect = "Allow",
+      Principal = {
+        Service = "ec2.amazonaws.com"
+      },
+      Action = "sts:AssumeRole"
+    }]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "ssm_policy" {
+  role       = aws_iam_role.ec2_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
+
+resource "aws_iam_instance_profile" "ec2_profile" {
+  name = "ec2-profile"
+  role = aws_iam_role.ec2_role.name
+}
+
+data "aws_ami" "amazon_linux" {
+  most_recent = true
+  owners      = ["amazon"]
+
+  filter {
+    name   = "name"
+    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
+  }
+}
+
+resource "aws_instance" "ec2" {
+  ami = data.aws_ami.amazon_linux.id
+  instance_type = "t2.micro"
+
+  subnet_id              = aws_subnet.public.id
+  vpc_security_group_ids = [aws_security_group.ec2_sg.id]
+  key_name               = aws_key_pair.ec2_key.key_name
+
+  iam_instance_profile = aws_iam_instance_profile.ec2_profile.name
+
+  associate_public_ip_address = true
+
+  user_data = <<-EOF
+              #!/bin/bash
+              yum update -y
+              EOF
+
+  tags = {
+    Name = "secure-ec2"
+  }
+}

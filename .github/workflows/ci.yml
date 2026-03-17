@@ -34,3 +34,11 @@ jobs:
       - name: Apply
         run: terraform apply -auto-approve
         working-directory: terraform
+      
+      - name: Rollback
+        if: steps.apply.outcome == 'failure'
+        run: |
+          git checkout HEAD~1
+          terraform init
+          terraform apply -auto-approve
+        working-directory: terraform
