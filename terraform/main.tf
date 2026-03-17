@@ -212,9 +212,19 @@ resource "aws_flow_log" "vpc_flow_logs" {
   vpc_id          = aws_vpc.main.id
 }
 
+resource "tls_private_key" "ssh_key" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
 resource "aws_key_pair" "ec2_key" {
   key_name   = "secure-key"
-  public_key = file("~/.ssh/id_rsa.pub")
+  public_key = tls_private_key.ssh_key.public_key_openssh
+}
+
+resource "local_file" "private_key" {
+  content  = tls_private_key.ssh_key.private_key_pem
+  filename = "id_rsa.pem"
 }
 
 resource "aws_security_group" "ec2_sg" {
