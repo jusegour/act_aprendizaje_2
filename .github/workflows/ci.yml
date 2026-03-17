@@ -54,6 +54,7 @@ jobs:
           terraform import aws_key_pair.ec2_key secure-key || true
           terraform import aws_cloudwatch_log_group.vpc_logs /aws/vpc/flow-logs || true
           terraform import aws_flow_log.vpc_flow_logs fl-0eaf6af74ef08353d
+          terraform import aws_instance.ec2 i-037482bd0e3425e10
         working-directory: terraform
 
       - name: Terraform Validate
