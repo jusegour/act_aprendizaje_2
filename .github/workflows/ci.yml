@@ -27,35 +27,8 @@ jobs:
         run: terraform init
         working-directory: terraform
 
-      - name: Terraform Import Resources
-        run: |
-          terraform import aws_iam_role.ec2_role ec2-ssm-role || true
-          terraform import aws_iam_instance_profile.ec2_profile ec2-profile || true
-          terraform import aws_iam_role_policy_attachment.ssm_policy ec2-ssm-role/arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore || true
-          terraform import aws_iam_role.flow_logs_role flow-logs-role || true
-
-          terraform import aws_vpc.main vpc-0a485e7bb62ec0155 || true
-          terraform import aws_subnet.public subnet-00b4559302670f96b || true
-          terraform import aws_subnet.private subnet-0ef15bea41f21b243 || true
-          terraform import aws_internet_gateway.igw igw-09ba1bd34b2c44d76 || true
-
-          terraform import aws_route_table.public_rt rtb-0ad7ca6057b402eb0 || true
-          terraform import aws_route_table.private_rt rtb-07bf1ad54ad106fdd || true
-          terraform import aws_route_table_association.public_assoc rtbassoc-031a51fb349ec23b5 || true
-          terraform import aws_route_table_association.private_assoc rtbassoc-0bc1761e5d61ff71f || true
-
-          terraform import aws_eip.nat_eip eipalloc-00213be29cda264fb || true
-          terraform import aws_nat_gateway.nat nat-07ac7c3fd6bbab680 || true
-
-          terraform import aws_security_group.ec2_sg sg-09cc152a0853ae659 || true
-          terraform import aws_security_group.web_sg sg-05daabcd3bfc96cab || true
-          terraform import aws_network_acl.main_acl acl-05e82dbac94c1bd26 || true
-
-          terraform import aws_key_pair.ec2_key secure-key || true
-          terraform import aws_cloudwatch_log_group.vpc_logs /aws/vpc/flow-logs || true
-          terraform import aws_flow_log.vpc_flow_logs fl-0eaf6af74ef08353d
-          terraform import aws_instance.ec2 i-037482bd0e3425e10
-        working-directory: terraform
+      - name: Terraform Destroy
+        run: terraform destroy -auto-approve || true
 
       - name: Terraform Validate
         run: terraform validate

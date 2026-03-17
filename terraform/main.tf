@@ -33,6 +33,17 @@ resource "aws_subnet" "public" {
   }
 }
 
+resource "aws_subnet" "public_2" {
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = "10.0.2.0/24"
+  availability_zone       = "us-east-2b"
+  map_public_ip_on_launch = true
+
+  tags = {
+    Name = "public-subnet-2"
+  }
+}
+
 resource "aws_subnet" "private" {
   vpc_id     = aws_vpc.main.id
   cidr_block = var.private_subnet_cidr
@@ -88,6 +99,11 @@ resource "aws_route_table" "private_rt" {
 resource "aws_route_table_association" "public_assoc" {
   subnet_id      = aws_subnet.public.id
   route_table_id = aws_route_table.public_rt.id
+}
+
+resource "aws_route_table_association" "public_2_assoc" {
+  subnet_id      = aws_subnet.public_2.id
+  route_table_id = aws_route_table.public.id
 }
 
 resource "aws_route_table_association" "private_assoc" {
@@ -342,8 +358,10 @@ resource "aws_lb" "alb" {
   name               = "app-alb"
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb_sg.id]
-  subnets            = [
-    aws_subnet.public.id
+
+  subnets = [
+    aws_subnet.public.id,
+    aws_subnet.public_2.id
   ]
 }
 
@@ -429,7 +447,8 @@ resource "aws_autoscaling_group" "asg" {
   min_size         = 1
 
   vpc_zone_identifier = [
-    aws_subnet.public.id
+    aws_subnet.public.id,
+    aws_subnet.public_2.id
   ]
 
   launch_template {
