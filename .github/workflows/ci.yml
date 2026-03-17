@@ -23,7 +23,6 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
-<<<<<<< HEAD
       - name: Init
         run: terraform init
         working-directory: terraform
@@ -35,9 +34,3 @@ jobs:
       - name: Apply
         run: terraform apply -auto-approve
         working-directory: terraform
-=======
-      - name: Run tests
-        run: |
-          export PYTHONPATH=$PYTHONPATH:.
-          pytest
->>>>>>> be81f2733c8873af7454a7fd40afe401e3d09939
