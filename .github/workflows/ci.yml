@@ -28,7 +28,7 @@ jobs:
         working-directory: terraform
 
       - name: Terraform Destroy
-        run: terraform destroy -auto-approve || true
+        run: terraform destroy -auto-approve
 
       - name: Terraform Validate
         run: terraform validate
