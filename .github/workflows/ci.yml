@@ -61,6 +61,7 @@ jobs:
           terraform import aws_cloudwatch_log_group.vpc_logs /aws/vpc/flow-logs
 
           terraform import aws_key_pair.ec2_key secure-key
+          terraform import aws_iam_instance_profile.ec2_profile ec2-profile
 
         working-directory: terraform
 
