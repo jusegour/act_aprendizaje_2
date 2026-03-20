@@ -29,7 +29,6 @@ jobs:
 
       - name: Terraform Imports
         run: |
-          set +e
 
           terraform import aws_vpc.main vpc-08446939057385eaf
 
@@ -65,7 +64,6 @@ jobs:
 
           terraform import aws_key_pair.ec2_key secure-key
 
-          set -e
 
       - name: Terraform Plan
         run: terraform plan -out=tfplan
