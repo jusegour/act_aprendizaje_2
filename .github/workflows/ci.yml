@@ -45,7 +45,6 @@ jobs:
           terraform import aws_route_table.public_rt rtb-062d81c9fe9d628e8
 
           terraform import aws_route_table_association.public_assoc rtbassoc-00509668691210358
-          terraform import aws_route_table_association.public_2_assoc rtbassoc-0021ff352db092310
 
           terraform import aws_lb.alb arn:aws:elasticloadbalancing:us-east-2:323744082114:loadbalancer/app/app-alb/2014fd47552715c6
 
