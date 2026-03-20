@@ -27,12 +27,45 @@ jobs:
         run: terraform init
         working-directory: terraform
 
-      - name: Terraform Destroy
-        run: terraform destroy -auto-approve
+      - name: Terraform Imports
+        run: |
+          set +e
 
-      - name: Terraform Validate
-        run: terraform validate
-        working-directory: terraform
+          terraform import aws_vpc.main vpc-08446939057385eaf
+
+          terraform import aws_internet_gateway.igw igw-02b6c813c0c119ada
+
+          terraform import aws_subnet.public subnet-0ea972c28589022f1
+          terraform import aws_subnet.public_2 subnet-0c106a7174481966d
+          terraform import aws_subnet.private subnet-0f42a74f6ef410a7e
+
+          terraform import aws_security_group.web_sg sg-06c3ef490a9a464c5
+          terraform import aws_security_group.ec2_sg sg-0a0049e22d723bbcb
+          terraform import aws_security_group.alb_sg sg-025ac3f5277c57e34
+
+          terraform import aws_route_table.public_rt rtb-062d81c9fe9d628e8
+
+          terraform import aws_route_table_association.public_assoc rtbassoc-00509668691210358
+          terraform import aws_route_table_association.public_2_assoc rtbassoc-0021ff352db092310
+
+          terraform import aws_lb.alb arn:aws:elasticloadbalancing:us-east-2:323744082114:loadbalancer/app/app-alb/2014fd47552715c6
+
+          terraform import aws_lb_target_group.tg arn:aws:elasticloadbalancing:us-east-2:323744082114:targetgroup/app-tg/b01649ca07b5a025
+
+          terraform import aws_lb_listener.http arn:aws:elasticloadbalancing:us-east-2:323744082114:listener/app/app-alb/2014fd47552715c6/06bf6afde35b152e
+
+          terraform import aws_lb_listener_rule.api_rule arn:aws:elasticloadbalancing:us-east-2:323744082114:listener-rule/app/app-alb/2014fd47552715c6/06bf6afde35b152e/ddc45c6176a58441
+
+          terraform import aws_acm_certificate.cert arn:aws:acm:us-east-2:323744082114:certificate/97b8dadf-b7f4-4902-a9af-55aa89e47724
+
+          terraform import aws_iam_role.flow_logs_role flow-logs-role
+          terraform import aws_iam_role.ec2_role ec2-ssm-role
+
+          terraform import aws_cloudwatch_log_group.vpc_logs /aws/vpc/flow-logs
+
+          terraform import aws_key_pair.ec2_key secure-key
+
+          set -e
 
       - name: Terraform Plan
         run: terraform plan -out=tfplan
