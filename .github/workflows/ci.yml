@@ -64,6 +64,7 @@ jobs:
 
           terraform import aws_key_pair.ec2_key secure-key
 
+        working-directory: terraform
 
       - name: Terraform Plan
         run: terraform plan -out=tfplan
