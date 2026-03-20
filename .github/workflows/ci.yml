@@ -55,8 +55,6 @@ jobs:
 
           terraform import aws_lb_listener_rule.api_rule arn:aws:elasticloadbalancing:us-east-2:323744082114:listener-rule/app/app-alb/2014fd47552715c6/06bf6afde35b152e/ddc45c6176a58441
 
-          terraform import aws_acm_certificate.cert arn:aws:acm:us-east-2:323744082114:certificate/97b8dadf-b7f4-4902-a9af-55aa89e47724
-
           terraform import aws_iam_role.flow_logs_role flow-logs-role
           terraform import aws_iam_role.ec2_role ec2-ssm-role
 
